@@ -1,6 +1,9 @@
 # Object files
 *.o
 
+#compiled python
+*.pyc
+
 # Libraries
 *.lib
 *.a
