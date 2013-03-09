@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 90% ; margin-left: 0px; margin-right: 200px;}
+</style>
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?sensor=false">
+</script>
+<script type="text/javascript">
+	//read in the json str
+	var facs = eval((($hoopjson)));
+
+	function pinPoint(fac,themap){
+		var marker = new google.maps.Marker({
+			position: new google.maps.LatLng(fac["lat"], fac["lon"]),
+			map: themap, 
+			title: fac["Name"]
+		});   
+	}
+	
+  function initialize() {
+    var latlng = new google.maps.LatLng(facs[0]["lat"], facs[0]["lon"]);
+    var myOptions = {
+      zoom: 11,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map_canvas"),
+        myOptions);
+		
+	for(i=0;i<facs.length;i++){
+		pinPoint(facs[i],map);
+	}
+  }
+
+</script>
+</head>
+<body onload="initialize()">
+	<h1>NYC BBall Courts</h1>
+	By David
+	<br />
+	Source: NYC BigApps Data - <a href='http://www.nycgovparks.org/bigapps/DPR_Basketball_001.xml'>http://www.nycgovparks.org/bigapps/DPR_Basketball_001.xml</a>
+  <div id="map_canvas"></div>
+</body>
+</html>
