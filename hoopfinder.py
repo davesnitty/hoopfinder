@@ -7,6 +7,8 @@ from xml.etree import ElementTree as ET
 import urllib2
 import web
 import  json
+import hashlib
+import sys
 
 from web.contrib.template import render_cheetah
 
@@ -22,13 +24,12 @@ class Hoopmap:
         print "Hoop Finder"
 
         facilities = []
-
-        #dataurl = "http://www.nycgovparks.org/bigapps/DPR_Basketball_001.xml"
-        #xtext = urllib2.urlopen(dataurl).read()
+        
 
         f= open('DPR_Basketball_001.xml', 'r')
         xtext=f.read()
-    
+        xtext = xtext.replace('&','&amp;')        
+
         xtree = ET.XML(xtext)
 
         for x in xtree:
@@ -42,6 +43,8 @@ class Hoopmap:
         
         #print facilities[0:3]
 
+        #print len(facilities)
+
         #make a json str
         hoopjson = json.dumps(facilities)
         #print hoopjson
@@ -49,4 +52,29 @@ class Hoopmap:
         return render.hoopmap(**locals())
         
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'update':
+            sys.argv[1] = '' #reset argument to avoid conflicts with wsgi server
+            dataurl = "http://www.nycgovparks.org/bigapps/DPR_Basketball_001.xml"
+            newfile_text = urllib2.urlopen(dataurl).read()
+
+            f= open('DPR_Basketball_001.xml', 'r')
+            existfile_text = f.read()
+
+            newhash = hashlib.sha1(newfile_text).hexdigest()
+            existhash = hashlib.sha1(existfile_text).hexdigest()
+
+            print 'new= ' + newhash
+            print 'old= ' + existhash
+
+            if newhash != existhash:
+                print 'updating file'
+                f.close()
+                f= open('DPR_Basketball_001.xml', 'w')
+                f.write(newfile_text)
+                f.close()
+                print 'file updated'
+            else:
+                print 'files identical - no need to update'
+    
     app.run()
