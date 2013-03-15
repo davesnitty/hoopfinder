@@ -20,6 +20,12 @@
 			map: themap, 
 			title: fac["Name"]
 		});   
+		var infowindow = new google.maps.InfoWindow({
+            content: fac["Name"] + "<br />" + fac["Location"]
+		});
+		google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(themap,marker);
+        });
 	}
 	
   function initialize() {
